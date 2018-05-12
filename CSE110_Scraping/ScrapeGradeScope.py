@@ -73,7 +73,7 @@ def getGrades(email,password):
 
 
 #dictionary = getGrades('GRADESCOPE_EMAIL', 'GRADESCOPE_PASSWORD')
-dictionary = getGrades('kvn033@ucsd.edu', 'Angler139710')
+dictionary = getGrades('USERNAME@ucsd.edu', 'PASSWORD')
 
 
 # In[13]:
