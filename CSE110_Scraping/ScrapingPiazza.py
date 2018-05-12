@@ -77,7 +77,7 @@ print(notificationNumber)
 # In[4]:
 
 
-p.user_login('kvn033@ucsd.edu', 'Angler139710')
+p.user_login('USERNAME@ucsd.edu', 'Password')
 user_profile = p.get_user_profile()
 CSE110 = p.network("jebhpmejaa92vh")
 
