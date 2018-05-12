@@ -1,107 +1,139 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[2]:
 
 
+#file to scrape
 from bs4 import BeautifulSoup
+
+#files to login
 from lxml import html
+import lxml.html
 import requests
+
 import pandas as pd
+
 import re
 from robobrowser import RoboBrowser
 
 
-# In[12]:
+# In[56]:
 
 
-def loginWebsite(URLogin, Username, Password, URLPage):
-    session_requests = requests.session()
-    login_url = URLogin
-    result = session_requests.get(login_url)
-    #Made the session request to the get login
-
-    tree = html.fromstring(result.text)
-    authenticity_token = list(set(tree.xpath("//input[@name='authenticityToken']/@value")))[0]
-    # get teh authenticity token
-    payload = {
-        "username": Username, 
-        "password": Password, 
-        "authenticityToken": authenticity_token
-    }
-    #data to login with
-    superSoup = ''
-    with requests.session() as sessions:
-        result = sessions.post(
-            login_url, 
-            data = payload, 
-            headers = dict(referer=login_url)
-        )
-        actualpage = URLPage
-        #able to access pages within the login using the get command
-        r = sessions.get(actualpage)
-        superSoup = BeautifulSoup(r.content, 'html.parser')
-
-    tree = html.fromstring(result.content)
-    return superSoup
+#used to log user into Grade
+def getAutoGraderSession(loginURL, Email, Password):
+    s = requests.session()
+    login = s.get(loginURL)
+    login_html = lxml.html.fromstring(login.text)
+    hidden_inputs = login_html.xpath(r'//form//input[@type="hidden"]')
+    form= {x.attrib["name"]: x.attrib["value"] for x in hidden_inputs}
+    #print(form)
+    form['username'] = Email
+    form['password'] = Password 
+    response = s.post(loginURL, data=form)
+    response.url
+    return (response, s)
+    #returns the urls response and the session
 
 
-# In[13]:
+# In[86]:
 
 
-superSoup = loginWebsite("https://autograder.ucsd.edu/login","username@ucsd.edu", "password", 'https://autograder.ucsd.edu/queue/248')
-print(superSoup.find('div', {'class': 'queue-listing tab-content'}))
+(myAutoGrader, session) = getAutoGraderSession('https://autograder.ucsd.edu/login', 'USERNAME@ucsd.edu', 'PASSWORD')
+souppy = BeautifulSoup(myAutoGrader.content, 'html.parser')
+print(type(session))
 
 
-# In[5]:
+# In[87]:
 
 
-print(superSoup.prettify())
+tempYo = souppy.find_all('a')
+
+queue = ''
+        
+def findQueue(stringValue):
+    for i in stringValue:
+    
+        if 'queue' in i['href']:
+            return i
+    return ''
+
+queue = findQueue(tempYo)
+print(queue['href'])
 
 
-# In[7]:
+# In[88]:
 
 
-CourseList = superSoup.find_all('option')
+queueRequest = session.get('https://autograder.ucsd.edu' + queue['href'] + '#pending-tab')
 
 
-# In[8]:
+# In[89]:
 
 
-for i in range(len(CourseList)-1):
-    print(CourseList[i]['title'])
-    print(CourseList[i])
+queueSoup = BeautifulSoup(queueRequest.content, 'html.parser')
 
 
-
-# In[7]:
-
-
-peopleList= superSoup.find_all('a')
+# In[91]:
 
 
-# In[18]:
+queueSoup.find('div', {'id': 'news-feed-tab-container'})
 
 
-for i in peopleList:
-    print(i)
+# In[63]:
 
 
-# In[9]:
+#print(souppy.prettify())
+#TRYING TO FIND THE FRICKEN LIST FOR THE QUEUE
+chicken = souppy.find_all('a')
+history = ''
+for i in chicken:
+    if 'history' in i['href'] and 'queue' in i['href'] :
+        history = i['href']
+        
+print(history)
+
+requestHistory = session.get('https://autograder.ucsd.edu' + history)
+prettyHistory = BeautifulSoup(requestHistory.content, 'html.parser')
+print(prettyHistory)
 
 
-superSoup.prettify()
+# In[40]:
 
 
-# In[66]:
+#list of courses currently enrolled
+courses = souppy.find_all('option')
+currentCourses = []
+print(courses)
 
 
-listOfLink = souppy.find_all('a')
+# In[41]:
 
 
-# In[73]:
+# remote irrelvant courses that are disabled
+for i in courses:
+    if i['value'] != '-1':
+        currentCourses.append(i.text)
 
 
-for i in listOfLink:
-    print(i['href'])
+# In[42]:
+
+
+print(currentCourses)
+#format
+for i in range(len(currentCourses)):
+    currentCourses[i] = currentCourses[i].replace('\n', '').strip()
+#print courses on autograder
+print(currentCourses)
+
+
+# In[49]:
+
+
+queue = souppy.find('div', {'class': 'queue-listing tab-content'})
+print(queue)
+print(queue.find('ul'))
+temp = souppy.find_all('ul')
+print(temp)
 

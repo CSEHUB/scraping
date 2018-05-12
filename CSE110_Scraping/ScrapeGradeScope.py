@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[2]:
 
 
 from bs4 import BeautifulSoup
@@ -13,7 +13,7 @@ import re
 from robobrowser import RoboBrowser
 
 
-# In[77]:
+# In[3]:
 
 
 def cas_login(service, username, password):
@@ -39,83 +39,60 @@ def cas_login(service, username, password):
     return session
 
 
-# In[78]:
+# In[4]:
 
 
-session = (cas_login('https://gradescope.com/login', 'username@ucsd.edu', 'password'))
-temp = session.get('https://gradescope.com/account')
-
-
-# In[79]:
-
-
-banana = BeautifulSoup(temp.content, 'html.parser')
-links = banana.find_all('a', {'class': 'courseBox'})
-
-
-# In[110]:
-
-
-print(links[0]['href'])
-listOfClasses = banana.find_all('div', {'class': 'courseList'})
-print(type(links[2]))
-
-
-# In[155]:
-
-value = 0
-if len(listOfClasses) == 2:
-    value = 1
-for i in listOfClasses[value].find_all('a'):
-    #print(i['href'])
-    print(i.find('h3').text)
-    firstCourse = session.get( 'https://gradescope.com' + i['href'])
-    secondBeauty = BeautifulSoup(firstCourse.content, 'html.parser')
-    listClass = secondBeauty.find_all('tr')
+def getGrades(email,password):
+    session = (cas_login('https://gradescope.com/login', email, password))
+    temp = session.get('https://gradescope.com/account')
+    banana = BeautifulSoup(temp.content, 'html.parser')
     
-    for i in range(len(listClass)-1):
-        scores = listClass[i+1].find_all('td')[0].text
-        if listClass[i+1].find('th').find('a')!= None:
-            course = listClass[i+1].find('th').find('a').text
-            print(course, scores)
+    links = banana.find_all('a', {'class': 'courseBox'})
+    listOfClasses = banana.find_all('div', {'class': 'courseList'})
+    value = 0
+    if len(listOfClasses) == 2:
+        value = 1
+    dictValue = {}
+    for i in listOfClasses[value].find_all('a'):
+        #print(i['href'])
+        dictValue[i.find('h3').text] = []
+        firstCourse = session.get( 'https://gradescope.com' + i['href'])
+        secondBeauty = BeautifulSoup(firstCourse.content, 'html.parser')
+        listClass = secondBeauty.find_all('tr')
+        
+        for k in range(len(listClass)-1):
+            scores = listClass[k+1].find_all('td')[0].text
+            if listClass[k+1].find('th').find('a')!= None:
+                course = listClass[k+1].find('th').find('a').text
+                dictValue[i.find('h3').text].append({course: scores})
+           
+    return dictValue
 
 
-# In[107]:
+# In[12]:
 
 
-firstCourse = session.get( 'https://gradescope.com' + links[2]['href'] )
-
-for i in links:
-    print(i)
+#dictionary = getGrades('GRADESCOPE_EMAIL', 'GRADESCOPE_PASSWORD')
+dictionary = getGrades('kvn033@ucsd.edu', 'Angler139710')
 
 
-# In[85]:
+# In[13]:
 
 
-secondBeauty = BeautifulSoup(firstCourse.content, 'html.parser')
-secondBeauty
+#display the data as a json
+for (key, value) in dictionary.items():
+    print("{", key, ":")
+    for i in value:
+        print("\t", i)
+    print("}")
+    print()
 
 
-# In[88]:
+# In[14]:
 
 
-listClass = secondBeauty.find_all('tr')
-    
-for i in range(len(listClass)-1):
-    scores = listClass[i+1].find_all('td')[0].text
-    course = listClass[i+1].find('th').find('a').text
-    print(course, scores)
-
-
-# In[73]:
-
-
-for i in links:
-    print(i.find('h3').text)
-
-
-# In[60]:
-
-
-print(superSoup)
+#exporting your grades as a json LOL
+import json
+with open('grade.json', 'w') as fp:
+    json.dump(dictValue, fp)
 
