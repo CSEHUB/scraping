@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[22]:
+# In[1]:
 
 
 from piazza_api import Piazza
@@ -14,82 +14,83 @@ import re
 p = Piazza()
 
 
-# In[23]:
-
-
-def cas_login(service, username, password):
-    # GET parameters - URL we'd like to log into.
-    params = {'service': service}
-    LOGIN_URL = service
-
-    # Start session and get login form.
-    session = requests.session()
-    login = session.get(LOGIN_URL)
-    #print(login.text)
-    # Get the hidden elements and put them in our form.
-    login_html = lxml.html.fromstring(login.text)
-    hidden_elements = login_html.xpath('//form//input[@type="hidden"]')
-    form = {x.attrib['name']: x.attrib['value'] for x in hidden_elements}
-
-    # "Fill out" the form.
-    form['email'] = username
-    form['password'] = password
-
-    # Finally, login and return the session.
-    session.post(LOGIN_URL, data=form, params=params)
-    return session
+# In[2]:
 
 
 
-# In[24]:
+person = p.user_login('USERNAME@ucsd.edu', 'PASSWORD')
+user_profile = p.get_user_profile()
+print()
+user_classes= p.get_user_classes()
+print(p)
+CSE110 = p.network("jebhpmejaa92vh")
+print(type(CSE110))
+#CSE110.get_post(10)
 
 
-session = cas_login('https://piazza.com/account/login', 'USERNAME@ucsd.edu', 'PASSWORD')
+
+#posts = CSE110.iter_all_posts(limit=1)
+#for post in posts:
+#    for i in post:
+#        print(i)
 
 
-# In[25]:
+# In[3]:
 
 
-temp = session.get('https://piazza.com/class/')
-
-
-# In[26]:
-
-
-soup = BeautifulSoup(temp.content, 'html.parser')
-
-
-# In[30]:
-
-
-soup.prettify()
-
-temp = soup.find_all('div')
-#notificationNumber = soup.find('div', {'id': 'global_notifications_indicator'})
-
-
-# In[28]:
-
-
-print(notificationNumber)
+for i in CSE110.feed_filters:
+    print(i)
+print(type(CSE110.feed_filters))
+#feed = CSE110.get_filtered_feed((CSE110.feed_filters[0],CSE110.feed_filters[1],CSE110.feed_filters[2]))
 
 
 # In[4]:
 
 
-p.user_login('USERNAME@ucsd.edu', 'Password')
-user_profile = p.get_user_profile()
-CSE110 = p.network("jebhpmejaa92vh")
-
-CSE110.get_post(10)
-
-posts = CSE110.iter_all_posts(limit=1)
-for post in posts:
-    for i in post:
-        print(i)
+#holder = FeedFilter(CSE110)
+#filters = UnreadFilter(holder)
 
 
-# In[3]:
+# In[5]:
+
+
+#SEARCH FOR THE WORD QUIZ
+temp = CSE110.search_feed('Quiz')
+
+counter = 0
+for i in temp:
+    print()
+    print()
+    print(counter)
+    counter += 1
+    print("SUBJECT: ", i['subject'])
+    print("CONTENT: ", i['content_snipet'] )
+   # for key,value in i.items():
+   #     print(key + ":", value)
+
+
+# In[31]:
+
+
+#ALL THE COURSES THE USER IS ASSIGNED IN WITH THE ID
+for i in user_classes:
+    print(i['name'], ":", i['nid'])
+#Getting course numbers
+
+
+# In[12]:
+
+
+CSE110.get_statistics()
+
+
+# In[13]:
+
+
+
+
+
+# In[4]:
 
 
 for i in post:
