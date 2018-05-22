@@ -69,6 +69,7 @@ def convert(data):
         return data
     
 listOfValue = convert(listOfValue)
+listOfValue.pop('No CAPEs submitted', None)
 
 
 # In[8]:
