@@ -85,11 +85,12 @@ with open("DATA.json", "w") as outputFile:
     outputFile.write(jsonFormattedString)
 
 jsonDict = json.loads(jsonFormattedString)
-print(jsonDict)
 
 
 # In[9]:
 
+
+# modify databaseURL for testing
 
 import pyrebase
 
