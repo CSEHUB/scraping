@@ -21,10 +21,10 @@ import json
 #HIST
 #LIT
 
-# nameOfClass = ['ANTH', 'BENG', 'BIBC', 'CAT', 'CENG', 'CGS', 'CHEM', 'CHIN', 'COGS', 'COMM', 'CONT' , 'CSE' ,'DOC', 'ECE', 'ECON', 'EDS', 'ENVR', 'ERC', 'ESYS', 'ETHN', 'FILM', 'FPMU', 'HDP', 'HMNR', 'HUM', 'ICAM', 'INTL', 'JAPN', 'JUDA', 'LATI', 'LAWS', 'LIGN', 'MAE', 'MATH', 'MMW', 'MUIR', 'MUS', 'NANO', 'PHIL', 'PHYS', 'POLI', 'PSYC', 'RELI', 'REV','MGT', 'SDCC', 'SE','SIO', 'SOC', 'ENG', 'SXTH', 'TDAC', 'TDDM', 'TDGE', 'TMC', 'TWS', 'USP', 'VIS', 'WARR', 'WCWP']
-# firebase = firebase.FirebaseApplication('https://csehub-c4399.firebaseio.com/')
-nameOfClass = ['ANTH', 'BENG']
-firebase = firebase.FirebaseApplication('https://python-to-firebase.firebaseio.com/')
+nameOfClass = ['ANTH', 'BENG', 'BIBC', 'CAT', 'CENG', 'CGS', 'CHEM', 'CHIN', 'COGS', 'COMM', 'CONT' , 'CSE' ,'DOC', 'ECE', 'ECON', 'EDS', 'ENVR', 'ERC', 'ESYS', 'ETHN', 'FILM', 'FPMU', 'HDP', 'HMNR', 'HUM', 'ICAM', 'INTL', 'JAPN', 'JUDA', 'LATI', 'LAWS', 'LIGN', 'MAE', 'MATH', 'MMW', 'MUIR', 'MUS', 'NANO', 'PHIL', 'PHYS', 'POLI', 'PSYC', 'RELI', 'REV','MGT', 'SDCC', 'SE','SIO', 'SOC', 'ENG', 'SXTH', 'TDAC', 'TDDM', 'TDGE', 'TMC', 'TWS', 'USP', 'VIS', 'WARR', 'WCWP']
+firebase = firebase.FirebaseApplication('https://csehub-c4399.firebaseio.com/')
+# nameOfClass = ['ANTH', 'BENG']
+# firebase = firebase.FirebaseApplication('https://python-to-firebase.firebaseio.com/')
 
 
 # In[3]:
@@ -91,10 +91,4 @@ def scrapeCapes():
 scheduler = BackgroundScheduler()
 scheduler.add_job(scrapeCapes, 'interval', seconds=20)
 scheduler.start()
-
-
-# In[7]:
-
-
-nameOfClass = ['ANTH', 'BENG', 'BIBC', 'CAT', 'CENG', 'CGS', 'CHEM', 'CHIN', 'COGS', 'COMM', 'CONT' , 'CSE' ,'DOC', 'ECE', 'ECON', 'EDS', 'ENVR', 'ERC', 'ESYS', 'ETHN', 'FILM', 'FPMU', 'HDP', 'HMNR', 'HUM', 'ICAM', 'INTL', 'JAPN', 'JUDA', 'LATI', 'LAWS', 'LIGN', 'MAE', 'MATH', 'MMW', 'MUIR', 'MUS', 'NANO', 'PHIL', 'PHYS', 'POLI', 'PSYC', 'RELI', 'REV','MGT', 'SDCC', 'SE','SIO', 'SOC', 'ENG', 'SXTH', 'TDAC', 'TDDM', 'TDGE', 'TMC', 'TWS', 'USP', 'VIS', 'WARR', 'WCWP']
 
