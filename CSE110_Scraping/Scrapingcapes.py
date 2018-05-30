@@ -1,12 +1,13 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 from bs4 import BeautifulSoup
 from firebase import firebase
 from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
 # from apscheduler.schedulers.blocking import BlockingScheduler
 # from tabulate import tabulate
 import requests
@@ -14,7 +15,7 @@ import pandas as pd
 import json
 
 
-# In[2]:
+# In[ ]:
 
 
 #course deleted
@@ -25,9 +26,11 @@ nameOfClass = ['ANTH', 'BENG', 'BIBC', 'CAT', 'CENG', 'CGS', 'CHEM', 'CHIN', 'CO
 firebase = firebase.FirebaseApplication('https://csehub-c4399.firebaseio.com/')
 # nameOfClass = ['ANTH', 'BENG']
 # firebase = firebase.FirebaseApplication('https://python-to-firebase.firebaseio.com/')
+yearString = "17"
+year = int(yearString)
 
 
-# In[3]:
+# In[ ]:
 
 
 def jsonDict(className):
@@ -45,18 +48,20 @@ def jsonDict(className):
     ClassList = tableList.find_all('tr')
     
     for i in ClassList:
-        if(i.find_all('td')[2].text[-2:] == "17" and "(A)" in i.find_all('td')[1].text):
+        if(i.find_all('td')[2].text[-2:] == yearString and "(A)" in i.find_all('td')[1].text):
             listOfValue[i.find('a').text] = {}
     for i in ClassList:
-        if(i.find_all('td')[2].text[-2:] == "17" and "(A)" in i.find_all('td')[1].text):
+        if(i.find_all('td')[2].text[-2:] == yearString and "(A)" in i.find_all('td')[1].text):
             listOfValue[i.find('a').text][i.find_all('td')[2].text] = i.find_all('td')[7].text.replace("\n", "")
     return listOfValue
 
 
-# In[4]:
+# In[ ]:
 
 
 def scrapeCapes():
+    global yearString
+    global year
     # block 1
     allJSON = {}
     allJSON["Courses"] = {}
@@ -80,15 +85,20 @@ def scrapeCapes():
 
     jsonDictionary = json.loads(courseList)
     
-    result = firebase.patch('/', { "Course_17": jsonDictionary})
-    getResult = firebase.get('/Course_17', None)
+    result = firebase.patch('/', { "Course_"+str(year): jsonDictionary})
+    getResult = firebase.get('/Course_'+str(year), None)
     print(getResult)
+    
+    year = year + 1
+    yearString = str(year)
 
 
-# In[5]:
+# In[ ]:
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(scrapeCapes, 'interval', seconds=20)
+scheduler.add_job(scrapeCapes, 'interval', minutes=3, next_run_time=datetime.now())
+# for yearly scraping
+# scheduler.add_job(scrapeCapes, 'interval', years=1, next_run_time=datetime.now())
 scheduler.start()
 
